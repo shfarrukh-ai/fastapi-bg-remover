@@ -1,13 +1,3 @@
-bg-remover-project/          ← Root project folder
-│
-├─ main.py                  ← FastAPI backend (updated for new index.html)
-├─ requirements.txt         ← Python dependencies
-├─ templates/               ← HTML frontend folder
-│   └─ index.html           ← New HTML interface code pasted here
-├─ static/                  ← Optional: CSS/JS/images
-└─ README.md                ← Project description
-
-# main.py updated to serve new index.html interface and handle background removal
 from fastapi import FastAPI, UploadFile, File, Request
 from fastapi.responses import HTMLResponse, Response
 from fastapi.staticfiles import StaticFiles
@@ -57,6 +47,3 @@ async def remove_background(file: UploadFile = File(...)):
     buf = io.BytesIO()
     output_image.save(buf, format='PNG')
     return Response(content=buf.getvalue(), media_type="image/png")
-
-# Start command for Render:
-# uvicorn main:app --host 0.0.0.0 --port $PORT
