@@ -1,33 +1,21 @@
+# =====================
+# main.py
+# =====================
 from fastapi import FastAPI, UploadFile, File
-from fastapi.responses import JSONResponse
+from fastapi.responses import Response
 from rembg import remove
-from PIL import Image
-import io
 
-app = FastAPI()
+app = FastAPI(title="Background Remover API")
 
 @app.get("/")
 def home():
-    return {"status": "Background Remover API Running"}
+    return {"status": "API is running"}
 
 @app.post("/remove-bg")
 async def remove_bg(file: UploadFile = File(...)):
     try:
-        contents = await file.read()
-        input_image = Image.open(io.BytesIO(contents)).convert("RGBA")
-
-        output_bytes = remove(contents)
-        output_image = Image.open(io.BytesIO(output_bytes)).convert("RGBA")
-
-        img_byte_arr = io.BytesIO()
-        output_image.save(img_byte_arr, format="PNG")
-        img_byte_arr = img_byte_arr.getvalue()
-
-        return JSONResponse({
-            "filename": file.filename,
-            "message": "Background removed successfully",
-            "output_image_base64": img_byte_arr.hex()
-        })
-
+        input_bytes = await file.read()
+        output_bytes = remove(input_bytes)
+        return Response(content=output_bytes, media_type="image/png")
     except Exception as e:
-        return JSONResponse({"error": str(e)}, status_code=500)
+        return {"error": str(e)}
